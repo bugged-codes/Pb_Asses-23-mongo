@@ -79,20 +79,78 @@ const findInDbMany = async (queryData) => {
 	}
 };
 
-const updateInDbOne = async (filter, data) => {
+const updateInDbOne = async (queryData) => {
+	const filterCondition = queryData.filter;
+	const updateValue = { $set: queryData.value };
+
 	try {
 		await client.connect();
+		const dbResponse = await coll.updateOne(filterCondition, updateValue);
+		await client.close();
+		return dbResponse;
 	} catch (err) {
 		console.log(err);
 	}
 };
 
-const deleteInDbOne = async (filterQuery) => {
+const updateInDbMany = async (queryData) => {
+	const filterCondition = queryData.filter;
+	const updateValue = { $set: queryData.value };
+
 	try {
 		await client.connect();
+		const dbResponse = await coll.updateMany(filterCondition, updateValue);
+		await client.close();
+		return dbResponse;
 	} catch (err) {
 		console.log(err);
 	}
 };
 
-module.exports = { insert2dbOne, insert2dbMany, findInDbOne, findInDbMany, updateInDbOne, deleteInDbOne };
+const deleteInDbOne = async (queryData) => {
+	if (queryData.hasOwnProperty('age') && queryData.age !== Number) {
+		const ageQuery = { age: { $eq: parseInt(queryData.age) } };
+
+		try {
+			await client.connect();
+			const dbResponse = await coll.deleteOne(ageQuery);
+			await client.close();
+			return dbResponse;
+		} catch (err) {
+			console.log(err);
+		}
+	}
+	try {
+		await client.connect();
+		const dbResponse = await coll.deleteOne(queryData);
+		await client.close();
+		return dbResponse;
+	} catch (err) {
+		console.log(err);
+	}
+};
+
+const deleteInDbMany = async (queryData) => {
+	if (queryData.hasOwnProperty('age') && queryData.age !== Number) {
+		const ageQuery = { age: { $eq: parseInt(queryData.age) } };
+
+		try {
+			await client.connect();
+			const dbResponse = await coll.deleteMany(ageQuery);
+			await client.close();
+			return dbResponse;
+		} catch (err) {
+			console.log(err);
+		}
+	}
+	try {
+		await client.connect();
+		const dbResponse = await coll.deleteMany(queryData);
+		await client.close();
+		return dbResponse;
+	} catch (err) {
+		console.log(err);
+	}
+};
+
+module.exports = { insert2dbOne, insert2dbMany, findInDbOne, findInDbMany, updateInDbOne, updateInDbMany, deleteInDbOne, deleteInDbMany };
