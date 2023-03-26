@@ -30,11 +30,33 @@ const stuEnrollmentMany = async (req, res) => {
 
 const stuFindOne = async (req, res) => {
 	const query = req.query;
-	console.log('query is: ', query);
+	const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+	console.log(`query is: ${query} \n request URL is: ${fullUrl}`);
 	try {
 		const result = await mongo.findInDbOne(query);
 		console.log(`Result is: `, result);
-		return res.status(200).send({ response: { message: `Controller and Database are working fine.` }, actionPerformed: { message: `One document found in collection for given query.`, result: result }, data: query });
+		if (result === null) {
+			return res.status(200).send({ response: { message: `Controller and Database are working fine.` }, actionPerformed: { message: `No document found in collection for given query.`, result: result }, query: query });
+		} else {
+			return res.status(200).send({ response: { message: `Controller and Database are working fine.` }, actionPerformed: { message: `One document found in collection for given query.`, result: result }, query: query });
+		}
+	} catch (err) {
+		console.log(err);
+	}
+};
+
+const stuFindMany = async (req, res) => {
+	const query = req.query;
+	const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+	console.log(`query is: ${query} \n request URL is: ${fullUrl}`);
+	try {
+		const result = await mongo.findInDbMany(query);
+		console.log(`Result is: `, result);
+		if (result.length === 0) {
+			return res.status(200).send({ response: { message: `Controller and Database are working fine.` }, actionPerformed: { message: `No documents found in collection for given query.`, result: result }, query: query });
+		} else {
+			return res.status(200).send({ response: { message: `Controller and Database are working fine.` }, actionPerformed: { message: `Following documents were found in collection for given query.`, result: result }, query: query });
+		}
 	} catch (err) {
 		console.log(err);
 	}
@@ -64,4 +86,4 @@ const stuDeleteOne = async (req, res) => {
 	}
 };
 
-module.exports = { stuEnrollmentOne, stuEnrollmentMany, stuFindOne, stuUpdateOne, stuDeleteOne };
+module.exports = { stuEnrollmentOne, stuEnrollmentMany, stuFindOne, stuFindMany, stuUpdateOne, stuDeleteOne };

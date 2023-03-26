@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const stuRouter = require('./Routes/Rstudents');
 
 const dotenv = require('dotenv');
-dotenv.config({ path: './config.env' });
+dotenv.config({ path: './.env' });
 // console.log(process.env);
 const envPort = process.env.PORT;
 

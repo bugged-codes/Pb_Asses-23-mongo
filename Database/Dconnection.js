@@ -1,10 +1,10 @@
 // const mongo = require('mongodb')
 const { MongoClient } = require('mongodb');
 const dotenv = require('dotenv');
-dotenv.config({ path: './config.env' });
+dotenv.config({ path: './.env' });
 
-const url = process.env.localUrl;
-console.log('Db url is: ', url);
+const url = `${process.env.localUrl}`;
+// console.log('Db url is: ', url);
 
 // const client = new mongo.MongoClient(url)
 const client = new MongoClient(url);
@@ -34,6 +34,41 @@ const insert2dbMany = async (data) => {
 };
 
 const findInDbOne = async (queryData) => {
+	if (queryData.hasOwnProperty('age') && queryData.age !== Number) {
+		const ageQuery = { age: { $eq: parseInt(queryData.age) } };
+
+		try {
+			await client.connect();
+			const dbResponse = await coll.findOne(ageQuery);
+			await client.close();
+			return dbResponse;
+		} catch (err) {
+			console.log(err);
+		}
+	}
+	try {
+		await client.connect();
+		const dbResponse = await coll.findOne(queryData);
+		await client.close();
+		return dbResponse;
+	} catch (err) {
+		console.log(err);
+	}
+};
+
+const findInDbMany = async (queryData) => {
+	if (queryData.hasOwnProperty('age') && queryData.age !== Number) {
+		const ageQuery = { age: { $eq: parseInt(queryData.age) } };
+
+		try {
+			await client.connect();
+			const dbResponse = await coll.find(ageQuery).toArray();
+			await client.close();
+			return dbResponse;
+		} catch (err) {
+			console.log(err);
+		}
+	}
 	try {
 		await client.connect();
 		const dbResponse = await coll.find(queryData).toArray();
@@ -60,4 +95,4 @@ const deleteInDbOne = async (filterQuery) => {
 	}
 };
 
-module.exports = { insert2dbOne, insert2dbMany, findInDbOne, updateInDbOne, deleteInDbOne };
+module.exports = { insert2dbOne, insert2dbMany, findInDbOne, findInDbMany, updateInDbOne, deleteInDbOne };
