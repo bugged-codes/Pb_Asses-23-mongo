@@ -48,7 +48,7 @@ const stuFindOne = async (req, res) => {
 const stuFindMany = async (req, res) => {
 	const query = req.query;
 	const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-	console.log(`query is: ${query} \n request URL is: ${fullUrl}`);
+	console.log(`query is: ${query} \nrequest URL is: ${fullUrl}`);
 	try {
 		const result = await mongo.findInDbMany(query);
 		console.log(`Result is: `, result);

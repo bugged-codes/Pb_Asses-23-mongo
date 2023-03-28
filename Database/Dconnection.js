@@ -3,22 +3,26 @@ const { MongoClient } = require('mongodb');
 const dotenv = require('dotenv');
 dotenv.config({ path: './.env' });
 
-const url = `${process.env.localUrl}`;
+// * Local Connection method
+const url = `${process.env.LOCAL_URL}`;
 // console.log('Db url is: ', url);
 
 // const client = new mongo.MongoClient(url)
 const client = new MongoClient(url);
-const db = client.db(process.env.localDb);
-const coll = db.collection(process.env.localColl);
+// console.log(client);
+const db = client.db(process.env.LOCAL_DB);
+const coll = db.collection(process.env.LOCAL_COLL);
+// console.log(coll);
 
 const insert2dbOne = async (someData) => {
 	try {
 		await client.connect();
 		const dbResponse = await coll.insertOne(someData);
-		await client.close();
 		return dbResponse;
 	} catch (error) {
 		return error.message;
+	} finally {
+		await client.close();
 	}
 };
 
